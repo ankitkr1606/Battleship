@@ -43,6 +43,22 @@ def GameLoop():
 	main_board = generate_default_tiles(None)
 	ship_objs = ['Battleship','Cruiser','Destroyer','Submarine']
 	main_board = add_ships_to_Board(main_board , ship_objs)
+	while True:
+
+		for event in pygame.event.get():
+			if event.type == MOUSEMOTION:
+				mousex , mousey = event.pos
+			elif event.type == MOUSEBUTTONUP:
+				mousex , mousey = event.pos
+				mouse_clicked = True
+				tilex ,tiley = get_tile_at_pixel(mousex,mousey)
+				if not revealed_Tiles[tilex][tiley] and mouse_clicked:
+					revealed_Tiles[tilex][tiley] = True
+				if check_revealed_tiles(main_board , [(tilex , tiley)]):
+					pygame.draw.rect(DisplayScreen , Blue , (tilex*Tile_size+Margin_x,tiley*Tile_size+Margin_y,Tile_size,Tile_size),4)
+			elif event.type == QUIT:
+				pygame.quit()
+				sys.exit()
 
 def generate_default_tiles(default_value):
 	default_tiles = [[default_value]*Tiles_row for i in range(Tiles_col)]
@@ -93,6 +109,17 @@ def make_ship_position(new_Board , xstartpos , ystartpos, isHorizontal, ship_len
 			else:
 				ship_coordinates.append((xstartpos,i+ystartpos))
 	return (True , ship_coordinates)
+
+def check_revealed_tiles(new_Board , tile):
+	print(new_Board[tile[0][0]][tile[0][1]]== None)
+	return new_Board[tile[0][0]][tile[0][1]]== None
+
+def get_tile_at_pixel(mousex , mousey):
+	left = (int)((mousex - Margin_x)/Tile_size)
+	top = (int)((mousey - Margin_y)/Tile_size)
+	#tile_rect = pygame.Rect(left , top , Tile_size , Tile_size)
+	return (left , top)
+
 
 if __name__ == "__main__":
 	main()
